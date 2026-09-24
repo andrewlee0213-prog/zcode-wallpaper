@@ -75,7 +75,7 @@ WORK_DIR = os.path.join(tempfile.gettempdir(), 'zw-theme-mac')
 IMG_EXT_RE = re.compile(r'\.(png|jpe?g|webp|bmp|gif)$', re.I)
 VIDEO_EXT_RE = re.compile(r'\.(mp4|webm|m4v|mov)$', re.I)
 MASK = 'rgba(8, 10, 16, 0.80)'                           # 壁纸压暗蒙版, 保证前景可读
-MARKER = 'zcode-wallpaper-mac-v1'
+MARKER = 'zcode-wallpaper-mac-v2'
 
 POOL_DIR = (os.environ.get('ZCODE_POOL')
             or os.path.join(os.path.expanduser('~'),
@@ -572,27 +572,31 @@ def build_runtime_script(groups, baked_items):
     function collectPanels(kind) {
       var out = [], i;
       if (kind === 'code') {
-        var pres = document.querySelectorAll('pre');
-        for (i = 0; i < pres.length; i++) {
-          var p = panelOf(pres[i], 8);
+        var cands = document.querySelectorAll('pre, .hljs, [class*="code-block"]');
+        for (i = 0; i < cands.length; i++) {
+          var p = panelOf(cands[i], 12);
           if (p && out.indexOf(p) < 0) out.push(p);
         }
       } else {
-        var tas = document.querySelectorAll('textarea');
-        var best = null, bestTop = -1;
-        for (i = 0; i < tas.length; i++) {
-          var ta = tas[i];
-          if (!ta.offsetParent) continue;
-          var rr = ta.getBoundingClientRect();
-          if (rr.width < 60 || rr.height < 18) continue;
-          if (rr.top > bestTop) { bestTop = rr.top; best = ta; }
-        }
-        if (best) {
-          var pp = panelOf(best, 8);
+        var el = bottomMost(document.querySelectorAll('textarea'), 60, 18);
+        if (!el) el = bottomMost(document.querySelectorAll('[contenteditable="true"],[contenteditable=""]'), 100, 24);
+        if (el) {
+          var pp = panelOf(el, 12);
           if (pp) out.push(pp);
         }
       }
       return out;
+    }
+    function bottomMost(list, minW, minH) {
+      var best = null, bestTop = -1;
+      for (var i = 0; i < list.length; i++) {
+        var el = list[i];
+        if (!el.offsetParent) continue;
+        var rr = el.getBoundingClientRect();
+        if (rr.width < minW || rr.height < minH) continue;
+        if (rr.top > bestTop) { bestTop = rr.top; best = el; }
+      }
+      return best;
     }
     function closeRgb(color, base) {
       var v = rgbOf(color);
@@ -621,18 +625,18 @@ def build_runtime_script(groups, baked_items):
       var els = collectPanels(kind), base, a;
       if (kind === 'code') {
         if (!codeBase && els[0]) codeBase = rgbOf(getComputedStyle(els[0]).backgroundColor);
-        if (!codeBase) { toast('未找到代码框'); return; }
+        if (!codeBase) { toast('未找到代码框(pre×' + document.querySelectorAll('pre').length + ')'); return; }
         codeAlpha = PANEL_LEVELS[(PANEL_LEVELS.indexOf(codeAlpha) + 1) % PANEL_LEVELS.length];
         a = codeAlpha; saveLevel('zw-code-alpha', a);
         applyPanels('code', els, codeBase, a);
-        toast('代码框透明度 ' + Math.round(a * 100) + '%');
+        toast('代码框×' + els.length + ' · 透明度 ' + Math.round(a * 100) + '%');
       } else {
         if (!inputBase && els[0]) inputBase = rgbOf(getComputedStyle(els[0]).backgroundColor);
-        if (!inputBase) { toast('未找到输入框'); return; }
+        if (!inputBase) { toast('未找到输入框(ta×' + document.querySelectorAll('textarea').length + ',ce×' + document.querySelectorAll('[contenteditable]').length + ')'); return; }
         inputAlpha = PANEL_LEVELS[(PANEL_LEVELS.indexOf(inputAlpha) + 1) % PANEL_LEVELS.length];
         a = inputAlpha; saveLevel('zw-input-alpha', a);
         applyPanels('input', els, inputBase, a);
-        toast('输入框透明度 ' + Math.round(a * 100) + '%');
+        toast('输入框×' + els.length + ' · 透明度 ' + Math.round(a * 100) + '%');
       }
     }
     function refreshPanels() {
