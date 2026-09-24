@@ -1,0 +1,56 @@
+ZCode 壁纸工具包 · 便携版 v3.9 (2026-09-24)
+=============================================
+
+这是什么
+--------
+给 ZCode 桌面版装"随机壁纸 + 面板透明度"的小工具。
+壁纸显示在聊天界面底层，代码框和输入框可以调透明度透出壁纸。
+自带 Node 运行时和依赖，目标电脑不需要装任何东西，只要装了 ZCode 桌面版。
+
+包内容
+--------
+zcode背景设置\              工具本体（两个 bat + scripts\zcode-wallpaper.cjs）
+zcode-wallpaper-media\      壁纸素材（图片+视频，想换就往里加减文件）
+runtime\node.exe            便携 Node 运行时（无需安装 Node.js）
+runtime\asar-lib\           注入所需的 @electron/asar 依赖（离线可用）
+使用说明.txt                本文件
+
+怎么用（新电脑上）
+--------
+1. 把整个文件夹解压/拷贝到任意位置（路径不要有引号要求，中文也行）
+2. 确认目标电脑已安装 ZCode 桌面版
+3. 双击 zcode背景设置\zcode-面板透明度补丁.bat
+   —— 它会自动：关闭 ZCode → 注入补丁（首次约 1 分钟）→ 重启 ZCode
+4. 在 ZCode 里试按键（见下）
+
+日常换壁纸
+--------
+往 zcode-wallpaper-media 文件夹里加减图片/视频，
+再双击 zcode背景设置\zcode-wallpaper.bat 重扫一遍（秒级，不动 ZCode）。
+
+按键（都在 ZCode 里按，注意是【左】Ctrl）
+--------
+左Ctrl + .      循环切换壁纸（图片/视频混排随机顺序）
+左Ctrl + 1      代码框透明度循环：100% → 85% → 70% → 55% → 40% → 100%
+左Ctrl + 2      输入框（对话框）透明度循环：同上
+左Ctrl + 3 / 4  视频壁纸减速 / 加速
+左Ctrl + 5 / 6  壁纸蒙版加深 / 减淡
+
+所有设置（壁纸位置、蒙版深浅、面板透明度、倍速）自动记忆，重启不丢。
+
+常见问题
+--------
+Q: 双击补丁 bat 提示"未找到 ZCode 安装"？
+A: ZCode 装在非常规位置时，设一个系统环境变量：
+   ZCODE_ASAR = <ZCode安装目录>\resources\app.asar
+   然后重新双击 bat。
+
+Q: 电脑装了 Node.js，会冲突吗？
+A: 不会。包里自带 runtime\node.exe，优先用它，不碰系统 Node。
+
+Q: ZCode 升级后壁纸没了？
+A: 正常，升级会覆盖补丁。重新双击 zcode-面板透明度补丁.bat 即可恢复。
+
+Q: 想退回去？
+A: ZCode 安装目录 resources\ 下有注入前的备份 app.asar.pre-wall.bak，
+   关闭 ZCode 后用它覆盖 app.asar 即可还原。

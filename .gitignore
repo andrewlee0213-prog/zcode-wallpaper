@@ -1,0 +1,18 @@
+# 壁纸素材不入库（版权原因，自行放置）
+zcode-wallpaper-media/
+media/
+
+# 便携运行时（Releases 附件分发，不进 git）
+runtime/
+node.exe
+
+# 打包产物
+*.zip
+
+# asar 相关（工具的工作对象，不属于本仓库）
+app.asar
+app.asar.pre-wall.bak
+*.asar
+
+# 依赖与临时
+node_modules/
