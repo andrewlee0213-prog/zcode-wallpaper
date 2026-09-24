@@ -2,7 +2,21 @@
 
 ZCode 桌面端壁纸注入工具 —— 给 [ZCode](https://zcode.dev) Desktop 换上随机壁纸（图片+视频混排），并支持**代码框 / 输入框透明度调节**，让聊天界面透出你自己的壁纸。
 
-> v3.9 · Windows · 零依赖便携设计（自带 Node 运行时方案）
+> v3.10 · Windows + macOS · 零依赖便携设计（Windows 自带 Node 运行时方案 / macOS 用系统自带 Python 3）
+
+## 🍎 macOS 版
+
+本仓库现提供 macOS 移植版 **`scripts/zcode-wallpaper-mac.py`**——纯 Python 3 零依赖（macOS 系统自带），功能与热键和 Windows 版完全一致，并针对 macOS 适配了路径探测（`/Applications/ZCode.app`）、原子替换（运行中的 ZCode 不受影响，重开即生效）。
+
+```bash
+# 首次注入（ZCode 升级后同样）：完成后重开 ZCode 生效
+python3 scripts/zcode-wallpaper-mac.py --rebuild
+
+# 日常换素材（秒级，不用重启 ZCode）
+python3 scripts/zcode-wallpaper-mac.py
+```
+
+详见 **[README-macOS.md](README-macOS.md)**。
 
 ## 功能
 
